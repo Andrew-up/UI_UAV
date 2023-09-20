@@ -28,8 +28,6 @@ pygame.display.set_caption("Управление БПЛА")
 font = pygame.font.SysFont("Arial", 24)
 
 
-
-
 def show_info(x, y):
     text = font.render(f"Положение БПЛА: ({x}, {y})", True, (255, 0, 0))
     window.blit(text, (cam_1.get_width() + 20, 20), )
@@ -55,19 +53,29 @@ piece_rect = pygame.Rect(0, 0, 200, 200)
 piece_image = pygame.Surface(piece_rect.size)
 
 
+def draw_vector(start_point, end_point):
+    pygame.draw.line(bg_img, (255, 0, 0), start_point, end_point, width=5)
+
+
+# draw_vector(start_point=(50, 50), end_point=(100, 500))
+
 def show_cam(x, y):
     piece_rect.x = x
     piece_rect.y = y
     cam_2.blit(bg_img_copy, (cam_2.get_width() // 1 / 4, 100), piece_rect)
 
 
+
 def show_track(x, y):
     pygame.draw.circle(bg_img, (255, 0, 0), (x, y), 3)
+
 
 
 # Функция для отрисовки самолета на карте
 def draw_airplane(x, y):
     window.blit(UAV_image, (x - UAV_image.get_width() // 2, y - UAV_image.get_height() // 2), )
+
+
 
 
 # Основной цикл программы
@@ -97,12 +105,15 @@ while running:
     window.blit(cam_2, (cam_1.get_width(), 0))
     window.blit(bg_img, (0, 0))
 
+
+
     # Отрисовка самолета
     draw_airplane(airplane_x, airplane_y)
     show_cam(airplane_x, airplane_y)
 
     show_info(airplane_x, airplane_y)
     show_track(airplane_x, airplane_y)
+
 
     # Обновление окна
     pygame.display.update()
