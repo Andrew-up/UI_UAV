@@ -49,9 +49,8 @@ s.set_alpha(70)
 s.fill((102, 255, 51))
 bg_img.blit(s, (airplane_x - UAV_width // 2, airplane_y - UAV_height // 2))
 
-piece_rect = pygame.Rect(0, 0, 200, 200)
+piece_rect = pygame.Rect(0, 0, UAV_width, UAV_height)
 piece_image = pygame.Surface(piece_rect.size)
-
 
 def draw_vector(start_point, end_point):
     pygame.draw.line(bg_img, (255, 0, 0), start_point, end_point, width=5)
@@ -59,23 +58,25 @@ def draw_vector(start_point, end_point):
 
 # draw_vector(start_point=(50, 50), end_point=(100, 500))
 
+surf = pygame.Surface((100, 100))
+
 def show_cam(x, y):
-    piece_rect.x = x
-    piece_rect.y = y
-    cam_2.blit(bg_img_copy, (cam_2.get_width() // 1 / 4, 100), piece_rect)
+    piece_rect.x = x - piece_rect.height // 2
+    piece_rect.y = y - piece_rect.width // 2
+    piece_surface = bg_img_copy.subsurface((piece_rect.x, piece_rect.y, UAV_width, UAV_height))
+    scaled_piece_surface = pygame.transform.scale(piece_surface, (UAV_width * 2, UAV_height * 2))
+    cam_2.blit(scaled_piece_surface, (50, 100))
 
 
 
 def show_track(x, y):
+    # pass
     pygame.draw.circle(bg_img, (255, 0, 0), (x, y), 3)
-
 
 
 # Функция для отрисовки самолета на карте
 def draw_airplane(x, y):
     window.blit(UAV_image, (x - UAV_image.get_width() // 2, y - UAV_image.get_height() // 2), )
-
-
 
 
 # Основной цикл программы
@@ -89,13 +90,14 @@ while running:
     # Получение текущего состояния клавиш
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_LEFT] and airplane_x > 0:
+    if keys[pygame.K_LEFT] and airplane_x - UAV_width // 2 > 5:
         airplane_x -= 5
-    if keys[pygame.K_RIGHT] and airplane_x < cam_1.get_width() - UAV_width:
+    if keys[pygame.K_RIGHT] and airplane_x < cam_1.get_width() - UAV_width // 2 - 5:
+
         airplane_x += 5
-    if keys[pygame.K_UP] and airplane_y > 0:
+    if keys[pygame.K_UP] and airplane_y - UAV_width // 2 > 5:
         airplane_y -= 5
-    if keys[pygame.K_DOWN] and airplane_y < cam_1.get_height() - UAV_height:
+    if keys[pygame.K_DOWN] and airplane_y < cam_1.get_height() - UAV_height // 2 - 5:
         airplane_y += 5
 
     # Очистка экрана
@@ -105,15 +107,12 @@ while running:
     window.blit(cam_2, (cam_1.get_width(), 0))
     window.blit(bg_img, (0, 0))
 
-
-
     # Отрисовка самолета
     draw_airplane(airplane_x, airplane_y)
     show_cam(airplane_x, airplane_y)
 
     show_info(airplane_x, airplane_y)
     show_track(airplane_x, airplane_y)
-
 
     # Обновление окна
     pygame.display.update()
